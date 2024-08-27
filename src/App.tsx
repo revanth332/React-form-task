@@ -32,13 +32,13 @@ const schema = z.object({
       "Invalid date"
     ),
   color: z.string(),
-  course: z.string().array(),
+  course: z.string().array().min(1,"Must select atleast one course"),
   gender: z.enum(["Male", "Female"]),
   file: z.any().refine((file) => file?.size > 0, "File is required"),
   range: z.string(),
   url: z.string().url("Invalid URL"),
   time: z.string(),
-  dateTime: z.string(),
+  dateTime: z.string().refine((date) => !isNaN(Date.parse(date)),"Ivalid date time"),
   timeZone: z.string(),
 });
 
@@ -300,10 +300,11 @@ const App: React.FC = () => {
             />
             <span className="ml-2">Python</span>
           </label>
-          {errors.course && (
+
+        </div>
+        {errors.course && (
             <p className="text-red-600 text-sm mt-1 ml-2">{errors.course}</p>
           )}
-        </div>
       </div>
 
       <div className="flex flex-col">
@@ -332,10 +333,10 @@ const App: React.FC = () => {
             <span className="ml-2">Female</span>
           </label>
         </div>
-        {errors.gender && (
+      </div>
+      {errors.gender && (
           <p className="text-red-600 text-sm mt-1">{errors.gender}</p>
         )}
-      </div>
 
       <div className="flex flex-col">
         <label className="text-gray-700">File:</label>
@@ -385,7 +386,7 @@ const App: React.FC = () => {
         {errors.file && (
           <p className="text-red-600 text-sm mt-1">{errors.file}</p>
         )}
-        {formData.file?.name}
+        {/* {formData.file && !(formData.file?.name.split(".")[1].includes(fileType)) && <p className="text-red-600 text-sm mt-1">invalid file type</p>} */}
       </div>
       <input
         type="file"
